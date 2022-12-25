@@ -8,8 +8,6 @@ const CONFIG_FILE: &str = "./config.json";
 #[derive(Serialize, Deserialize)]
 pub struct Config {
     openid_connect: OpenIdConnectConfig,
-    logic_request_dispatch_instances: u16,
-    logic_requests_bound: usize,
     storage_request_dispatch_instances: u16,
     storage_requests_bound: usize,
 }
@@ -21,14 +19,6 @@ impl Config {
 
     pub fn move_open_id_connect(self) -> OpenIdConnectConfig {
         self.openid_connect
-    }
-
-    pub fn logic_request_dispatch_instances(&self) -> u16 {
-        self.logic_request_dispatch_instances
-    }
-
-    pub fn logic_requests_bound(&self) -> usize {
-        self.logic_requests_bound
     }
 
     pub fn storage_request_dispatch_instances(&self) -> u16 {

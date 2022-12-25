@@ -1,0 +1,13 @@
+{
+    "openid_connect": {
+        "jwks_uri": "https://simpleg.eu.auth0.com/.well-known/jwks.json",
+        "issuers": [
+            "https://simpleg.eu.auth0.com/"
+        ],
+        "audience": [
+            "definition-provider.cooplan"
+        ]
+    },
+    "storage_request_dispatch_instances": 4,
+    "storage_requests_bound": 128
+}

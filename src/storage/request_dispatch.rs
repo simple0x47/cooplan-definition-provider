@@ -1,5 +1,4 @@
 use async_channel::Receiver;
-use mongodb::Client;
 
 use crate::logic::storage_request::StorageRequest;
 
@@ -27,8 +26,11 @@ impl MongoDbRequestDispatch {
 
                     let result = match request {
                         StorageRequest::ExampleRequest(action) => {
-                            crate::storage::executors::mongodb_example::execute(action, &self.client)
-                                .await
+                            crate::storage::executors::mongodb_example::execute(
+                                action,
+                                &self.client,
+                            )
+                            .await
                         }
                     };
 

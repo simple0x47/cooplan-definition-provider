@@ -1,5 +1,5 @@
-use crate::logic::actions::example_storage_action::ExampleStorageAction;
+use super::actions::definition_storage_action::DefinitionStorageAction;
 
 pub enum StorageRequest {
-    ExampleRequest(ExampleStorageAction)
+    DefinitionRequest(DefinitionStorageAction),
 }
