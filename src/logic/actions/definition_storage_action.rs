@@ -8,7 +8,4 @@ pub enum DefinitionStorageAction {
         version: String,
         replier: Sender<Result<Definition, Error>>,
     },
-    GetLatest {
-        replier: Sender<Result<Definition, Error>>,
-    },
 }
