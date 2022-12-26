@@ -1,0 +1,35 @@
+[
+  {
+    "name": "latest_definition",
+    "amqp": {
+      "queue_declare_options": {
+        "passive": false,
+        "durable": true,
+        "exclusive": false,
+        "auto_delete": false,
+        "nowait": false
+      },
+      "queue_declare_arguments": {
+        "x-queue-type": "stream"
+      },
+      "channel_qos_prefetch_count": 10,
+      "channel_qos_options": {
+        "global": true
+      },
+      "channel_consume_options": {
+        "no_local": true,
+        "no_ack": false,
+        "exclusive": true,
+        "nowait": false
+      },
+      "channel_consume_arguments": {},
+      "channel_acknowledge_options": {
+        "multiple": false
+      },
+      "channel_reject_options": {
+        "requeue": false
+      }
+    },
+    "max_concurrent_requests": 8
+  }
+]

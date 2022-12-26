@@ -1,13 +1,22 @@
 use cooplan_amqp_api::config::api::openid_connect_config::OpenIdConnectConfig;
+use cooplan_definition_git_downloader::git_config::GitConfig;
 use serde::{Deserialize, Serialize};
 
 use crate::error::{Error, ErrorKind};
+
+use super::{
+    latest_definition_output_config::LatestDefinitionOutputConfig,
+    latest_definition_updater_config::LatestDefinitionUpdaterConfig,
+};
 
 const CONFIG_FILE: &str = "./config.json";
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
     openid_connect: OpenIdConnectConfig,
+    git: GitConfig,
+    definition_downloader: LatestDefinitionUpdaterConfig,
+    latest_definition_output: LatestDefinitionOutputConfig,
     storage_request_dispatch_instances: u16,
     storage_requests_bound: usize,
 }
@@ -19,6 +28,18 @@ impl Config {
 
     pub fn move_open_id_connect(self) -> OpenIdConnectConfig {
         self.openid_connect
+    }
+
+    pub fn git(&self) -> &GitConfig {
+        &self.git
+    }
+
+    pub fn definition_downloader(&self) -> &LatestDefinitionUpdaterConfig {
+        &self.definition_downloader
+    }
+
+    pub fn latest_definition_output(&self) -> &LatestDefinitionOutputConfig {
+        &self.latest_definition_output
     }
 
     pub fn storage_request_dispatch_instances(&self) -> u16 {

@@ -1,14 +1,13 @@
+use crate::logic::storage_request::StorageRequest;
+use cooplan_amqp_api::api::initialization_package::InitializationPackage;
 use std::io::{Error, ErrorKind};
 use std::time::Duration;
-use cooplan_amqp_api::api::initialization_package::InitializationPackage;
-use crate::logic::logic_request::LogicRequest;
-use crate::logic::storage_request::StorageRequest;
 
 mod api;
+pub mod config;
+mod error;
 mod logic;
 mod storage;
-mod error;
-pub mod config;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -32,11 +31,18 @@ async fn main() -> Result<(), Error> {
         }
     };
 
-    let (logic_request_sender, logic_request_receiver) =
-        async_channel::bounded::<LogicRequest>(config.logic_requests_bound());
+    let (storage_request_sender, storage_request_receiver) =
+        async_channel::bounded::<StorageRequest>(config.storage_requests_bound());
 
-    let api_package =
-        InitializationPackage::new(logic_request_sender, Box::new(api::registration::register));
+    // Set bounds to channel
+    let (output_sender, output_receiver) = tokio::sync::mpsc::channel(1024);
+
+    let api_package = InitializationPackage::new(
+        storage_request_sender,
+        Box::new(api::input::registration::register),
+        output_receiver,
+        Box::new(api::output::registration::register),
+    );
 
     match cooplan_amqp_api::api::init::initialize(api_package).await {
         Ok(()) => (),
@@ -48,30 +54,12 @@ async fn main() -> Result<(), Error> {
         }
     }
 
-    let (storage_request_sender, storage_request_receiver) =
-        async_channel::bounded::<StorageRequest>(config.storage_requests_bound());
-
-    match logic::init::initialize(
-        config.logic_request_dispatch_instances(),
-        logic_request_receiver,
-        storage_request_sender,
-    )
-        .await
-    {
-        Ok(()) => (),
-        Err(error) => {
-            return Err(Error::new(
-                ErrorKind::Other,
-                format!("failed to initialize logic: {}", error),
-            ));
-        }
-    }
-
     match storage::init::initialize(
         config.storage_request_dispatch_instances(),
+        config.git(),
         storage_request_receiver,
     )
-        .await
+    .await
     {
         Ok(()) => (),
         Err(error) => {

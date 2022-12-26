@@ -1,1 +1,1 @@
-pub mod mongodb_example;
+pub mod definition;
