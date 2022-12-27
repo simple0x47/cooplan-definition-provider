@@ -68,8 +68,7 @@
           "nowait": false
         },
         "channel_publish_properties": {}
-      },
-      "max_concurrent_requests": 8
+      }
     }
   ]
 }
