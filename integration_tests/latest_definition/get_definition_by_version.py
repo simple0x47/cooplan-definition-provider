@@ -54,6 +54,7 @@ RESPONSE_AMQP_CONFIG = {
     }
 }
 
+
 async def main():
     test.init_request(REQUEST)
 
@@ -67,6 +68,7 @@ async def main():
     if definition["Ok"]["version"] != GET_DEFINITION_VERSION:
         print(f"expected version '{GET_DEFINITION_VERSION}' got '{definition['version']}'")
         exit(1)
+
 
 if __name__ == "__main__":
     asyncio.run(main())
