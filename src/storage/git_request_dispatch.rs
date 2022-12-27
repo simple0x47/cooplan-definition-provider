@@ -6,7 +6,6 @@ use crate::logic::storage_request::StorageRequest;
 use super::definition_file_reader::DefinitionFileReader;
 
 pub struct GitRequestDispatch {
-    id: u32,
     git_downloader: Downloader,
     definition_file_reader: DefinitionFileReader,
     request_receiver: Receiver<StorageRequest>,
@@ -26,7 +25,6 @@ impl GitRequestDispatch {
         let definition_file_reader = DefinitionFileReader::new(repository_dir);
 
         GitRequestDispatch {
-            id,
             git_downloader,
             definition_file_reader,
             request_receiver,

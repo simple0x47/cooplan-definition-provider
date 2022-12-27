@@ -1,35 +1,75 @@
-[
-  {
-    "name": "latest_definition",
-    "amqp": {
-      "queue_declare_options": {
-        "passive": false,
-        "durable": true,
-        "exclusive": false,
-        "auto_delete": false,
-        "nowait": false
+{
+  "input": [
+    {
+      "name": "definition",
+      "amqp": {
+        "queue": {
+          "name": "definition",
+          "declare_options": {
+            "passive": false,
+            "durable": false,
+            "exclusive": false,
+            "auto_delete": true,
+            "nowait": false
+          },
+          "declare_arguments": {}
+        },
+        "channel_qos_prefetch_count": 10,
+        "channel_qos_options": {
+          "global": true
+        },
+        "channel_consume_options": {
+          "no_local": true,
+          "no_ack": false,
+          "exclusive": true,
+          "nowait": false
+        },
+        "channel_consume_arguments": {},
+        "channel_acknowledge_options": {
+          "multiple": false
+        },
+        "channel_reject_options": {
+          "requeue": false
+        }
       },
-      "queue_declare_arguments": {
-        "x-queue-type": "stream"
+      "max_concurrent_requests": 8
+    }
+  ],
+  "output": [
+    {
+      "name": "latest_definition",
+      "amqp": {
+        "queue": {
+          "name": "latest_definition",
+          "declare_options": {
+            "passive": false,
+            "durable": true,
+            "exclusive": false,
+            "auto_delete": false,
+            "nowait": false
+          },
+          "declare_arguments": {
+            "x-queue-type": {
+              "LongString": [
+                115,
+                116,
+                114,
+                101,
+                97,
+                109
+              ]
+            }
+          }
+        },
+        "channel_publish_exchange": "",
+        "channel_publish_options": {
+          "mandatory": false,
+          "immediate": false,
+          "nowait": false
+        },
+        "channel_publish_properties": {}
       },
-      "channel_qos_prefetch_count": 10,
-      "channel_qos_options": {
-        "global": true
-      },
-      "channel_consume_options": {
-        "no_local": true,
-        "no_ack": false,
-        "exclusive": true,
-        "nowait": false
-      },
-      "channel_consume_arguments": {},
-      "channel_acknowledge_options": {
-        "multiple": false
-      },
-      "channel_reject_options": {
-        "requeue": false
-      }
-    },
-    "max_concurrent_requests": 8
-  }
-]
+      "max_concurrent_requests": 8
+    }
+  ]
+}

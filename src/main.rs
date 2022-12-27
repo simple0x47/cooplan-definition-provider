@@ -1,5 +1,6 @@
 use crate::logic::storage_request::StorageRequest;
 use cooplan_amqp_api::api::initialization_package::InitializationPackage;
+use logic::latest_definition_updater::LatestDefinitionUpdater;
 use std::io::{Error, ErrorKind};
 use std::time::Duration;
 
@@ -38,7 +39,7 @@ async fn main() -> Result<(), Error> {
     let (output_sender, output_receiver) = tokio::sync::mpsc::channel(1024);
 
     let api_package = InitializationPackage::new(
-        storage_request_sender,
+        storage_request_sender.clone(),
         Box::new(api::input::registration::register),
         output_receiver,
         Box::new(api::output::registration::register),
@@ -53,6 +54,14 @@ async fn main() -> Result<(), Error> {
             ));
         }
     }
+
+    let latest_definition_updater = LatestDefinitionUpdater::new(
+        output_sender,
+        config.latest_definition_updater().clone(),
+        storage_request_sender,
+    );
+
+    tokio::spawn(latest_definition_updater.run());
 
     match storage::init::initialize(
         config.storage_request_dispatch_instances(),

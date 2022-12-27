@@ -17,7 +17,9 @@ pub async fn execute(
         DefinitionStorageAction::Get { version, replier } => {
             get(version, replier, git_downloader, definition_file_reader)
         }
-        DefinitionStorageAction::GetLatest { replier } => Ok(()),
+        DefinitionStorageAction::GetLatest { replier } => {
+            get_latest(replier, git_downloader, definition_file_reader)
+        }
     }
 }
 
@@ -52,7 +54,7 @@ fn get(
 
     match definition_file_reader.read() {
         Ok(definition) => {
-            if let Err(error) = replier.send(Ok(definition)) {
+            if let Err(_) = replier.send(Ok(definition)) {
                 return Err(Error::new(
                     ErrorKind::InternalFailure,
                     format!("failed to send ok as result"),
@@ -60,7 +62,54 @@ fn get(
             }
         }
         Err(error) => {
-            if let Err(error) = replier.send(Err(error)) {
+            if let Err(_) = replier.send(Err(error)) {
+                return Err(Error::new(
+                    ErrorKind::InternalFailure,
+                    format!("failed to send error as result"),
+                ));
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn get_latest(
+    replier: Sender<Result<Definition, Error>>,
+    git_downloader: &Downloader,
+    definition_file_reader: &DefinitionFileReader,
+) -> Result<(), Error> {
+    match git_downloader.download() {
+        Ok(_) => (),
+        Err(error) => {
+            return Err(Error::new(
+                ErrorKind::InternalFailure,
+                format!("failed to download definitions: {}", error),
+            ))
+        }
+    }
+
+    match git_downloader.set_version_to_latest() {
+        Ok(_) => (),
+        Err(error) => {
+            return Err(Error::new(
+                ErrorKind::InternalFailure,
+                format!("failed to update definitions to latest version: {}", error),
+            ))
+        }
+    }
+
+    match definition_file_reader.read() {
+        Ok(definition) => {
+            if let Err(_) = replier.send(Ok(definition)) {
+                return Err(Error::new(
+                    ErrorKind::InternalFailure,
+                    format!("failed to send ok as result"),
+                ));
+            }
+        }
+        Err(error) => {
+            if let Err(_) = replier.send(Err(error)) {
                 return Err(Error::new(
                     ErrorKind::InternalFailure,
                     format!("failed to send error as result"),

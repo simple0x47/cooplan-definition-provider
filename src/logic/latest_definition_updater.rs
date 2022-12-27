@@ -1,5 +1,6 @@
 use std::{fmt::Display, time::Duration};
 
+use async_recursion::async_recursion;
 use cooplan_definitions_lib::definition::Definition;
 use serde_json::Value;
 use tokio::sync::mpsc::Sender;
@@ -45,6 +46,7 @@ impl LatestDefinitionUpdater {
         }
     }
 
+    #[async_recursion]
     async fn send_update_request(&mut self) {
         let (replier, receiver) =
             tokio::sync::oneshot::channel::<Result<Definition, crate::error::Error>>();
@@ -111,7 +113,7 @@ impl LatestDefinitionUpdater {
         } else {
             tokio::time::sleep(Duration::from_secs(self.config.retry_interval_seconds)).await;
 
-            self.send_update_request();
+            self.send_update_request().await;
         }
     }
 }
