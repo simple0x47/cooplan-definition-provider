@@ -22,7 +22,7 @@ def main():
 
     tracked_data = json.loads(buffer.decode("utf-8"))
 
-    assert(tracked_data["id"] == "Valid")
+    assert(tracked_data["id"] == "definition")
     assert(tracked_data["state"] == "Valid")
 
 if __name__ == "__main__":
