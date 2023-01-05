@@ -7,9 +7,9 @@ use cooplan_amqp_api::api::input::request_result::RequestResult;
 use cooplan_amqp_api::api::input::request_result_error::{
     RequestResultError, RequestResultErrorKind,
 };
-use cooplan_amqp_api::config::api::config::Config;
-use cooplan_amqp_api::error::Error;
+use cooplan_amqp_api::error::{Error, ErrorKind};
 use cooplan_definitions_lib::definition::Definition;
+use cooplan_lapin_wrapper::config::api::Api;
 use serde_json::{Map, Value};
 
 use crate::logic::actions::definition_storage_action::DefinitionStorageAction;
@@ -21,8 +21,20 @@ const VERSION_KEY: &str = "version";
 
 const ACTIONS: &[&str] = &["get"];
 
-pub fn get(config: &Config) -> Result<InputElement<StorageRequest>, Error> {
-    let element_config = config.try_get_input_element_config(ELEMENT_NAME)?;
+pub fn get(config: &Api) -> Result<InputElement<StorageRequest>, Error> {
+    let element_config = match config
+        .input()
+        .iter()
+        .find(|element| element.id() == ELEMENT_NAME)
+    {
+        Some(element) => element,
+        None => {
+            return Err(Error::new(
+                ErrorKind::AutoConfigFailure,
+                format!("failed to find element with id '{}'", ELEMENT_NAME),
+            ))
+        }
+    };
 
     Ok(InputElement::new(
         ELEMENT_NAME.to_string(),
@@ -30,7 +42,7 @@ pub fn get(config: &Config) -> Result<InputElement<StorageRequest>, Error> {
             Box::pin(request_handler(request, storage_request_sender))
         }),
         ACTIONS,
-        element_config,
+        element_config.clone(),
     ))
 }
 

@@ -1,34 +1,41 @@
 {
   "input": [
     {
-      "name": "definition",
-      "amqp": {
+      "id": "definition",
+      "queue_consumer": {
         "queue": {
           "name": "definition",
-          "declare_options": {
-            "passive": false,
-            "durable": false,
-            "exclusive": false,
-            "auto_delete": true,
+          "declare": {
+            "options": {
+              "passive": false,
+              "durable": false,
+              "exclusive": false,
+              "auto_delete": true,
+              "nowait": false
+            },
+            "arguments": {}
+          }
+        },
+        "qos": {
+          "prefetch_count": 10,
+          "options": {
+            "global": true
+          }
+        },
+        "consume": {
+          "options": {
+            "no_local": true,
+            "no_ack": false,
+            "exclusive": true,
             "nowait": false
           },
-          "declare_arguments": {}
+          "arguments": {
+          }
         },
-        "channel_qos_prefetch_count": 10,
-        "channel_qos_options": {
-          "global": true
-        },
-        "channel_consume_options": {
-          "no_local": true,
-          "no_ack": false,
-          "exclusive": true,
-          "nowait": false
-        },
-        "channel_consume_arguments": {},
-        "channel_acknowledge_options": {
+        "acknowledge": {
           "multiple": false
         },
-        "channel_reject_options": {
+        "reject": {
           "requeue": false
         }
       },
@@ -37,18 +44,18 @@
   ],
   "output": [
     {
-      "name": "latest_definition",
-      "amqp": {
-        "queue": {
-          "name": "latest_definition",
-          "declare_options": {
+      "id": "latest_definition",
+      "queue": {
+        "name": "latest_definition",
+        "declare": {
+          "options": {
             "passive": false,
             "durable": true,
             "exclusive": false,
             "auto_delete": false,
             "nowait": false
           },
-          "declare_arguments": {
+          "arguments": {
             "x-queue-type": {
               "LongString": [
                 115,
@@ -60,14 +67,16 @@
               ]
             }
           }
-        },
-        "channel_publish_exchange": "",
-        "channel_publish_options": {
+        }
+      },
+      "publish": {
+        "exchange": "",
+        "options": {
           "mandatory": false,
           "immediate": false,
           "nowait": false
         },
-        "channel_publish_properties": {}
+        "properties": {}
       }
     }
   ]

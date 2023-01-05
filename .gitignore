@@ -4,3 +4,10 @@ Cargo.lock
 .idea
 .vscode
 **/.vscode
+
+/0
+/1
+/2
+/3
+
+*.csv
