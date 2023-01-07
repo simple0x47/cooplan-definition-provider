@@ -3,11 +3,11 @@ use std::sync::Arc;
 use async_channel::Sender;
 use cooplan_amqp_api::api::input::input_element::InputElement;
 use cooplan_amqp_api::api::input::request::Request;
-use cooplan_amqp_api::api::input::request_result::RequestResult;
-use cooplan_amqp_api::api::input::request_result_error::{
+use cooplan_amqp_api::error::{Error, ErrorKind};
+use cooplan_amqp_api_shared::api::input::request_result::RequestResult;
+use cooplan_amqp_api_shared::api::input::request_result_error::{
     RequestResultError, RequestResultErrorKind,
 };
-use cooplan_amqp_api::error::{Error, ErrorKind};
 use cooplan_definitions_lib::definition::Definition;
 use cooplan_lapin_wrapper::config::api::Api;
 use serde_json::{Map, Value};
