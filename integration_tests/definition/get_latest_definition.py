@@ -42,9 +42,11 @@ async def main():
         }
     })
 
+    timeout_after = int(os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
+
     print("[GET_LATEST_DEFINITION] Waiting for latest definition")
-    await asyncio.wait_for(output_api.connect(), os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
-    serialized_response = await asyncio.wait_for(output_api.read(), os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
+    await asyncio.wait_for(output_api.connect(), timeout_after)
+    serialized_response = await asyncio.wait_for(output_api.read(), timeout_after)
 
     print("[GET_LATEST_DEFINITION] Received latest definition")
     response = json.loads(serialized_response)

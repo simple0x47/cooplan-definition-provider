@@ -21,8 +21,10 @@ async def main():
 
     buffer = bytes()
 
+    timeout_after = int(os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
+
     print("[STATE_OUTPUT] Waiting for get definition by version")
-    await asyncio.wait_for(definition.get_definition_by_version.main(), os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
+    await asyncio.wait_for(definition.get_definition_by_version.main(), timeout_after)
 
     print("[STATE_OUTPUT] Waiting for state output")
     data = receiver_sock.recv(1024)

@@ -63,11 +63,12 @@ async def main():
     print("[GET_DEFINITION_BY_VERSION] Creating AMQP input API")
     input_api = amqp_input_api.AmqpInputApi(REQUEST_AMQP_CONFIG, RESPONSE_AMQP_CONFIG)
 
+    timeout_after = int(os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
     print("[GET_DEFINITION_BY_VERSION] Connecting to AMQP")
-    await asyncio.wait_for(input_api.connect(), os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
+    await asyncio.wait_for(input_api.connect(), timeout_after)
 
     print("[GET_DEFINITION_BY_VERSION] Sending request")
-    serialized_definition = await asyncio.wait_for(input_api.send_request(REQUEST), os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
+    serialized_definition = await asyncio.wait_for(input_api.send_request(REQUEST), timeout_after)
 
     print("[GET_DEFINITION_BY_VERSION] Received response")
     definition = json.loads(serialized_definition)
