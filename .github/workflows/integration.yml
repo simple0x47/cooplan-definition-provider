@@ -35,7 +35,7 @@ jobs:
       run: |
         mv ./target/release/cooplan-definition-provider ./cooplan-definition-provider
         chmod +x cooplan-definition-provider
-        ./cooplan-definition-provider &  
+        ./cooplan-definition-provider api.json config.json &  
     - name: Checkout script runner
       uses: actions/checkout@v3
       with:
