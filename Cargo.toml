@@ -1,6 +1,6 @@
 [package]
 name = "cooplan-definition-provider"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -12,9 +12,9 @@ cooplan-definitions-lib = "0.1.6"
 cooplan-definitions-io-lib = "0.1.5"
 cooplan-definition-git-downloader = "0.1.2"
 cooplan-definition-schema-validator = "0.1.1"
-cooplan-amqp-api = "0.7.0"
+cooplan-amqp-api = "0.8.0"
 cooplan-amqp-api-shared = "0.1.0"
-cooplan-lapin-wrapper = "0.4.1"
+cooplan-lapin-wrapper = "0.5.0"
 cooplan-state-tracker = "0.1.5"
 cooplan-mongodb = "0.1.0"
 
