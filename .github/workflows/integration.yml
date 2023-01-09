@@ -1,0 +1,50 @@
+name: Rust
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      ["main"]
+  pull_request:
+    branches:
+      ["main"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container: rust
+    
+    services:
+      rabbitmq:
+        image: rabbitmq:3.11
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: cargo build --release --verbose
+    - name: Run unit tests
+      run: cargo test --verbose
+    - name: Run definition provider in background
+      run: |
+        sed -i 's/localhost/rabbitmq/' config.json
+        mv ./target/release/cooplan-definition-provider ./cooplan-definition-provider
+        chmod +x cooplan-definition-provider
+        ./cooplan-definition-provider &      
+    - name: Checkout script runner
+      uses: actions/checkout@v3
+      with:
+        repository: 'simple0x47/cooplan-script-runner'
+        path: 'script_runner'
+    - name: Run integration tests
+      run: |
+        TOKEN_RESPONSE=$(curl --request POST --url $TOKEN_REQUEST_URI --header 'content-type: application/json' --data $TOKEN_REQUEST)
+        TOKEN=$(echo $TOKEN_RESPONSE | jq --raw-output '.access_token')
+        mv ./script_runner/script_runner.py ./script_runner.py
+        python3 script_runner.py ./integration_tests/ $TOKEN
+      env:
+          TOKEN_REQUEST_URI: ${{ secrets.TOKEN_REQUEST_URI }}
+          TOKEN_REQUEST: ${{ secrets.TOKEN_REQUEST }}
