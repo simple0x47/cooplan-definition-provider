@@ -55,3 +55,6 @@ jobs:
           TOKEN_REQUEST_URI: ${{ secrets.TOKEN_REQUEST_URI }}
           TOKEN_REQUEST: ${{ secrets.TOKEN_REQUEST }}
           AMQP_API_CONNECTION_URI: amqp://guest:guest@127.0.0.1:5672
+          DEFINITION_REPOSITORY: simple0x47/cooplan-definitions
+          DEFINITION_GIT_USER: simple0x47
+          DEFINITION_GIT_TOKEN: ${{ secrets.ACCESS_TOKEN }}
