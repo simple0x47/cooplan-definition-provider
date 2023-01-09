@@ -35,7 +35,10 @@ jobs:
       run: |
         mv ./target/release/cooplan-definition-provider ./cooplan-definition-provider
         chmod +x cooplan-definition-provider
-        ./cooplan-definition-provider api.json config.json &  
+        ./cooplan-definition-provider api.json config.json &
+      env:
+        GIT_USERNAME: 'simple0x47'
+        GIT_PASSWORD: ${{ secrets.ACCESS_TOKEN }}
     - name: Checkout script runner
       uses: actions/checkout@v3
       with:
