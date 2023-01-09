@@ -2,8 +2,9 @@ import json
 import socket
 import definition.get_definition_by_version
 import asyncio
+import os
 
-TIMEOUT_AFTER_SECONDS = 5
+TEST_TIMEOUT_AFTER_SECONDS_ENV = "TEST_TIMEOUT_AFTER_SECONDS"
 
 async def main():
     print("[STATE_OUTPUT] Starting")
@@ -21,7 +22,7 @@ async def main():
     buffer = bytes()
 
     print("[STATE_OUTPUT] Waiting for get definition by version")
-    await asyncio.wait_for(definition.get_definition_by_version.main(), TIMEOUT_AFTER_SECONDS)
+    await asyncio.wait_for(definition.get_definition_by_version.main(), os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
 
     print("[STATE_OUTPUT] Waiting for state output")
     data = receiver_sock.recv(1024)

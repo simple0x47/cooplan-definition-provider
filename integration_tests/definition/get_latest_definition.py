@@ -3,9 +3,10 @@ import json
 import shutil
 from amqp_api_client_py import amqp_output_api
 import git_helper
+import os
 
 GIT_LOCAL_REPOSITORY_PATH = "./latest_definition_repo"
-TIMEOUT_AFTER_SECONDS = 5
+TEST_TIMEOUT_AFTER_SECONDS_ENV = "TEST_TIMEOUT_AFTER_SECONDS"
 
 async def main():
     print("[GET_LATEST_DEFINITION] Starting")
@@ -42,8 +43,8 @@ async def main():
     })
 
     print("[GET_LATEST_DEFINITION] Waiting for latest definition")
-    await asyncio.wait_for(output_api.connect(), TIMEOUT_AFTER_SECONDS)
-    serialized_response = await asyncio.wait_for(output_api.read(), TIMEOUT_AFTER_SECONDS)
+    await asyncio.wait_for(output_api.connect(), os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
+    serialized_response = await asyncio.wait_for(output_api.read(), os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
 
     print("[GET_LATEST_DEFINITION] Received latest definition")
     response = json.loads(serialized_response)

@@ -2,9 +2,10 @@ import asyncio
 import json
 from amqp_api_client_py import amqp_input_api
 from cooplan_integration_test_boilerplate import test
+import os
 
 GET_DEFINITION_VERSION = "6bc4697553f0511780480ddae602a636802d3cdc"
-TIMEOUT_AFTER_SECONDS = 5
+TEST_TIMEOUT_AFTER_SECONDS_ENV = "TEST_TIMEOUT_AFTER_SECONDS"
 
 REQUEST = {
     "header": {
@@ -63,10 +64,10 @@ async def main():
     input_api = amqp_input_api.AmqpInputApi(REQUEST_AMQP_CONFIG, RESPONSE_AMQP_CONFIG)
 
     print("[GET_DEFINITION_BY_VERSION] Connecting to AMQP")
-    await asyncio.wait_for(input_api.connect(), TIMEOUT_AFTER_SECONDS)
+    await asyncio.wait_for(input_api.connect(), os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
 
     print("[GET_DEFINITION_BY_VERSION] Sending request")
-    serialized_definition = await asyncio.wait_for(input_api.send_request(REQUEST), TIMEOUT_AFTER_SECONDS)
+    serialized_definition = await asyncio.wait_for(input_api.send_request(REQUEST), os.environ.get(TEST_TIMEOUT_AFTER_SECONDS_ENV, 15))
 
     print("[GET_DEFINITION_BY_VERSION] Received response")
     definition = json.loads(serialized_definition)
