@@ -31,6 +31,7 @@ jobs:
         path: 'script_runner'
     - name: Run integration tests
       run: |
+        export PYTHONPATH=$(realpath ./integration_tests/)
         TOKEN_RESPONSE=$(curl --request POST --url $TOKEN_REQUEST_URI --header 'content-type: application/json' --data $TOKEN_REQUEST)
         TOKEN=$(echo $TOKEN_RESPONSE | jq --raw-output '.access_token')
         mv ./script_runner/script_runner.py ./script_runner.py
