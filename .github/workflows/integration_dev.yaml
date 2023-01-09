@@ -32,6 +32,9 @@ jobs:
       with:
         repo: 'simple0x47/cooplan-definition-provider'
         file: 'cooplan-definition-provider'
+    - name: Wait for RabbitMQ to become alive
+      run: |
+        sleep 15
     - name: Run definition provider in background
       run: |
         chmod +x cooplan-definition-provider
