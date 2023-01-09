@@ -6,6 +6,7 @@ import asyncio
 TIMEOUT_AFTER_SECONDS = 5
 
 async def main():
+    print("[STATE_OUTPUT] Starting")
     config_file = open("./config.json")
 
     config = json.load(config_file)
@@ -13,16 +14,20 @@ async def main():
     output_sender_path = config["state_tracking_config"]["state_output_sender_path"]
     output_receiver_path = config["state_tracking_config"]["state_output_receiver_path"]
 
+    print("[STATE_OUTPUT] Creating socket")
     receiver_sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
     receiver_sock.bind(output_receiver_path)
 
     buffer = bytes()
 
+    print("[STATE_OUTPUT] Waiting for get definition by version")
     await asyncio.wait_for(definition.get_definition_by_version.main(), TIMEOUT_AFTER_SECONDS)
 
+    print("[STATE_OUTPUT] Waiting for state output")
     data = receiver_sock.recv(1024)
     buffer += data
 
+    print("[STATE_OUTPUT] Received state output")
     tracked_data = json.loads(buffer.decode("utf-8"))
 
     assert(tracked_data["id"] == "definition")

@@ -8,6 +8,7 @@ GIT_LOCAL_REPOSITORY_PATH = "./latest_definition_repo"
 TIMEOUT_AFTER_SECONDS = 5
 
 async def main():
+    print("[GET_LATEST_DEFINITION] Starting")
     output_api = amqp_output_api.AmqpOutputApi({
         "queue": {
             "name": "latest_definition",
@@ -40,15 +41,19 @@ async def main():
         }
     })
 
+    print("[GET_LATEST_DEFINITION] Waiting for latest definition")
     await asyncio.wait_for(output_api.connect(), TIMEOUT_AFTER_SECONDS)
     serialized_response = await asyncio.wait_for(output_api.read(), TIMEOUT_AFTER_SECONDS)
 
+    print("[GET_LATEST_DEFINITION] Received latest definition")
     response = json.loads(serialized_response)
 
+    print("[GET_LATEST_DEFINITION] Cloning the definitions repository")
     latest_definition_version = git_helper.get_latest_definition_version(GIT_LOCAL_REPOSITORY_PATH)
 
     shutil.rmtree(GIT_LOCAL_REPOSITORY_PATH)
 
+    print("[GET_LATEST_DEFINITION] Completed cloning the definitions repository")
     if response["version"] != latest_definition_version:
         print(f"expected version '{latest_definition_version}' got '{response['version']}'")
         exit(1)

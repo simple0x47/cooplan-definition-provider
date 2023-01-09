@@ -56,13 +56,19 @@ RESPONSE_AMQP_CONFIG = {
 
 
 async def main():
+    print("[GET_DEFINITION_BY_VERSION] Starting")
     test.init_request(REQUEST)
 
+    print("[GET_DEFINITION_BY_VERSION] Creating AMQP input API")
     input_api = amqp_input_api.AmqpInputApi(REQUEST_AMQP_CONFIG, RESPONSE_AMQP_CONFIG)
 
+    print("[GET_DEFINITION_BY_VERSION] Connecting to AMQP")
     await asyncio.wait_for(input_api.connect(), TIMEOUT_AFTER_SECONDS)
+
+    print("[GET_DEFINITION_BY_VERSION] Sending request")
     serialized_definition = await asyncio.wait_for(input_api.send_request(REQUEST), TIMEOUT_AFTER_SECONDS)
 
+    print("[GET_DEFINITION_BY_VERSION] Received response")
     definition = json.loads(serialized_definition)
 
     if definition["Ok"]["version"] != GET_DEFINITION_VERSION:
