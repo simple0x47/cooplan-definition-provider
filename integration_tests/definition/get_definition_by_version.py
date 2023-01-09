@@ -77,6 +77,7 @@ async def main():
         print(f"expected version '{GET_DEFINITION_VERSION}' got '{definition['version']}'")
         exit(1)
 
+    exit(0)
 
 if __name__ == "__main__":
     asyncio.run(main())

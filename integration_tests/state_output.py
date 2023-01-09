@@ -34,6 +34,7 @@ async def main():
     tracked_data = json.loads(buffer.decode("utf-8"))
 
     assert(tracked_data["state"] == "Valid")
+    exit(0)
 
 
 if __name__ == "__main__":
