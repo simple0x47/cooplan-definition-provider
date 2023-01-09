@@ -20,6 +20,8 @@ jobs:
     services:
       rabbitmq:
         image: rabbitmq:3.11
+        ports:
+          - 5672:5672
 
     steps:    
     - name: Checkout definition provider
@@ -39,4 +41,4 @@ jobs:
       env:
           TOKEN_REQUEST_URI: ${{ secrets.TOKEN_REQUEST_URI }}
           TOKEN_REQUEST: ${{ secrets.TOKEN_REQUEST }}
-          AMQP_API_CONNECTION_URI: amqp://guest:guest@rabbitmq:5672
+          AMQP_API_CONNECTION_URI: amqp://guest:guest@127.0.0.1:5672
