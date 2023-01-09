@@ -47,3 +47,4 @@ jobs:
       env:
           TOKEN_REQUEST_URI: ${{ secrets.TOKEN_REQUEST_URI }}
           TOKEN_REQUEST: ${{ secrets.TOKEN_REQUEST }}
+          AMQP_API_CONNECTION_URI: amqp://guest:guest@rabbitmq:5672
