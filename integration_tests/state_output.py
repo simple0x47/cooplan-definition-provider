@@ -1,8 +1,11 @@
 import json
 import socket
+import definition.get_definition_by_version
+import asyncio
 
+TIMEOUT_AFTER_SECONDS = 5
 
-def main():
+async def main():
     config_file = open("./config.json")
 
     config = json.load(config_file)
@@ -15,7 +18,7 @@ def main():
 
     buffer = bytes()
 
-    # TODO: run get definition by version before receiving state
+    await asyncio.wait_for(definition.get_definition_by_version.main(), TIMEOUT_AFTER_SECONDS)
 
     data = receiver_sock.recv(1024)
     buffer += data
@@ -25,5 +28,6 @@ def main():
     assert(tracked_data["id"] == "definition")
     assert(tracked_data["state"] == "Valid")
 
+
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
