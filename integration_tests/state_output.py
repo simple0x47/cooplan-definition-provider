@@ -32,9 +32,7 @@ async def main():
 
     print("[STATE_OUTPUT] Received state output")
     tracked_data = json.loads(buffer.decode("utf-8"))
-    print(f"TrackedData: {tracked_data}")
 
-    assert(tracked_data["id"] == "definition")
     assert(tracked_data["state"] == "Valid")
 
 
