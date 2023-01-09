@@ -33,7 +33,6 @@ jobs:
       run: cargo test --verbose
     - name: Run definition provider in background
       run: |
-        sed -i 's/localhost/rabbitmq/' config.json
         mv ./target/release/cooplan-definition-provider ./cooplan-definition-provider
         chmod +x cooplan-definition-provider
         ./cooplan-definition-provider &  
