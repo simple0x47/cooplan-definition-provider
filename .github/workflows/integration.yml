@@ -16,6 +16,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     
     services:
       rabbitmq:
@@ -23,9 +24,19 @@ jobs:
         ports:
           - 5672:5672
 
-    steps:    
+    steps:
     - name: Checkout definition provider
       uses: actions/checkout@v3
+    - name: Build
+      run: cargo build --release --verbose
+    - name: Run unit tests
+      run: cargo test --verbose
+    - name: Run definition provider in background
+      run: |
+        sed -i 's/localhost/rabbitmq/' config.json
+        mv ./target/release/cooplan-definition-provider ./cooplan-definition-provider
+        chmod +x cooplan-definition-provider
+        ./cooplan-definition-provider &  
     - name: Checkout script runner
       uses: actions/checkout@v3
       with:
