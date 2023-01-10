@@ -43,3 +43,21 @@ jobs:
         asset_path: ./target/release/cooplan-definition-provider
         asset_name: cooplan-definition-provider
         asset_content_type: application/x-elf
+    - name: Upload config.json
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./config.json
+        asset_name: config.json
+        asset_content_type: application/json
+    - name: Upload api_consumer.json
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./api_consumer.json
+        asset_name: api_consumer.json
+        asset_content_type: application/json
