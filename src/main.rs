@@ -3,7 +3,6 @@ use cooplan_amqp_api::api::initialization_package::InitializationPackage;
 use cooplan_state_tracker::state_tracker::StateTracker;
 use cooplan_state_tracker::state_tracker_client::StateTrackerClient;
 use cooplan_state_tracker::state_tracking_config::StateTrackingConfig;
-use cooplan_state_tracker::tracked_data::TrackedData;
 use logic::latest_definition_updater::LatestDefinitionUpdater;
 use std::io::{Error, ErrorKind};
 use std::time::Duration;
