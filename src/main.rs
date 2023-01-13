@@ -1,9 +1,6 @@
 use crate::logic::storage_request::StorageRequest;
 use cooplan_amqp_api::api::initialization_package::InitializationPackage;
-use cooplan_state_tracker::state_tracker::StateTracker;
 use cooplan_state_tracker::state_tracker_client;
-use cooplan_state_tracker::state_tracker_client::StateTrackerClient;
-use cooplan_state_tracker::state_tracking_config::StateTrackingConfig;
 use logic::latest_definition_updater::LatestDefinitionUpdater;
 use std::io::{Error, ErrorKind};
 use std::time::Duration;
@@ -31,6 +28,11 @@ async fn main() -> Result<(), Error> {
         None => return Err(Error::new(ErrorKind::InvalidInput, "no api file provided")),
     };
 
+    let api = match cooplan_lapin_wrapper::config::api::try_get(api_file.as_str()).await {
+        Ok(api) => api,
+        Err(error) => return Err(Error::new(ErrorKind::InvalidInput, format!("failed to read api: {}", error))),
+    };
+
     let config_file = match std::env::args().nth(2) {
         Some(config_file) => config_file,
         None => {
@@ -41,7 +43,17 @@ async fn main() -> Result<(), Error> {
         }
     };
 
-    let config = match config::config::try_read_config().await {
+    let api_config = match cooplan_amqp_api::config::config::try_read_config(&config_file).await {
+        Ok(config) => config,
+        Err(error) => {
+            return Err(Error::new(
+                ErrorKind::Other,
+                format!("failed to read api config: {}", error),
+            ));
+        }
+    };
+
+    let config = match config::config::try_read_config(&config_file).await {
         Ok(config) => config,
         Err(error) => {
             return Err(Error::new(
@@ -68,9 +80,8 @@ async fn main() -> Result<(), Error> {
         Box::new(api::input::registration::register),
         output_receiver,
         Box::new(api::output::registration::register),
-        config.amqp_api_connect,
-        api_file,
-        config_file,
+        api,
+        api_config,
         state_tracker_client,
     );
 
