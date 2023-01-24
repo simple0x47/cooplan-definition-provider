@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use async_channel::Sender;
+use cooplan_amqp_api::api::input::input_element;
 use cooplan_amqp_api::api::input::input_element::InputElement;
 use cooplan_amqp_api::api::input::request::Request;
 use cooplan_amqp_api::error::{Error, ErrorKind};
@@ -21,8 +22,8 @@ const VERSION_KEY: &str = "version";
 
 const ACTIONS: &[&str] = &["get"];
 
-pub fn get(config: &Api) -> Result<InputElement<StorageRequest>, Error> {
-    let element_config = match config
+pub fn get(api: &Api) -> Result<InputElement<StorageRequest>, Error> {
+    let element_config = match api
         .input()
         .iter()
         .find(|element| element.id() == ELEMENT_NAME)
@@ -36,14 +37,16 @@ pub fn get(config: &Api) -> Result<InputElement<StorageRequest>, Error> {
         }
     };
 
-    Ok(InputElement::new(
-        ELEMENT_NAME.to_string(),
+    let input_api = input_element::extract_input(
+        api,
+        ELEMENT_NAME,
         Arc::new(move |request, storage_request_sender| {
             Box::pin(request_handler(request, storage_request_sender))
         }),
         ACTIONS,
-        element_config.clone(),
-    ))
+    )?;
+
+    Ok(input_api)
 }
 
 async fn request_handler(
@@ -55,7 +58,7 @@ async fn request_handler(
         Err(error) => return RequestResult::Err(error.into()),
     };
 
-    let data = request.data();
+    let data = request.data;
 
     match action.as_str() {
         "get" => get_action(data, storage_request_sender).await,
